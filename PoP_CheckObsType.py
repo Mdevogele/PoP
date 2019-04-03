@@ -48,7 +48,7 @@ def CheckObsType(filenames):
     
     List_ID_LoPol = ['GD 319', 'BD+33  2642']
     
-    List_ID_LoPol_Comp = {'GD  319': 'GD319', 'BD+33  2642': 'BD332642'}    
+    List_ID_LoPol_Comp = {'GD 319': 'GD319', 'BD+33  2642': 'BD332642'}    
     
     List_ID_HiPol = ['HD 155197', 'HD 155528']
     

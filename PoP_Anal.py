@@ -11,7 +11,7 @@ import operator
 from scipy.optimize import curve_fit
 from astroquery.jplhorizons import Horizons
 
-def Anal(filenames,Plot,Target,Aperture):
+def Anal(filenames,Plot,Target,Aperture,SS):
 
     Res = []
     JD = []
@@ -30,11 +30,12 @@ def Anal(filenames,Plot,Target,Aperture):
         Stoke_Final.append(stokes)
         JD.append(float(elem.replace('\n',' ').replace('\t',' ').split()[0]))
         retarder.append(float(elem.replace('\n',' ').replace('\t',' ').split()[1]))
-
-        obj = Horizons(id=Target, location='679', epochs=float(elem.replace('\n',' ').replace('\t',' ').split()[0]))
-        eph = obj.ephemerides()
-        Alpha.append(eph['alpha'][0])
-        PlAng.append(eph['sunTargetPA'][0])  
+        
+        if not SS:
+            obj = Horizons(id=Target, location='679', epochs=float(elem.replace('\n',' ').replace('\t',' ').split()[0]))
+            eph = obj.ephemerides()
+            Alpha.append(eph['alpha'][0])
+            PlAng.append(eph['sunTargetPA'][0])  
         All.append(stokes)
         if Plot:    
             plt.plot(stokes)
@@ -56,10 +57,15 @@ def Anal(filenames,Plot,Target,Aperture):
   
     Res = All[:,Aperture]
     
-    with open('result.txt', 'w') as f:
-        for idx,elem in enumerate(Res):
-            f.write(str(retarder[idx]) + '\t' + str(JD[idx]) + '\t' + str(Alpha[idx]) + '\t' + str(PlAng[idx]) + '\t' + str(elem) + '\n')
-        
+    if not SS:
+        with open('result.txt', 'w') as f:
+            for idx,elem in enumerate(Res):
+                f.write(str(retarder[idx]) + '\t' + str(JD[idx]) + '\t' + str(Alpha[idx]) + '\t' + str(PlAng[idx]) + '\t' + str(elem) + '\n')
+    else:
+        with open('result_Standard.txt', 'w') as f:
+            for idx,elem in enumerate(Res):
+                f.write(str(retarder[idx]) + '\t' + str(JD[idx]) + '\t' + str(0) + '\t' + str(0) + '\t' + str(elem) + '\n')
+            
     
 
 if __name__ == '__main__':
@@ -72,15 +78,20 @@ if __name__ == '__main__':
     parser.add_argument('-object', help='Name of the target for retrieving alpha and scaterring plane angle values',
                         default=False) 
     parser.add_argument('images', help='images to process', nargs='+')
+    parser.add_argument('-SS', action="store_true")
     args = parser.parse_args()
     
     filenames = args.images
     aperture = args.aper
     Plot = args.plot
-    Target = args.object.replace('_',' ')
+    SS = args.SS
+    if not SS:
+        Target = args.object.replace('_',' ')
+    else:
+        Target = args.object
 
 
-    Anal(filenames,Plot,Target,aperture)
+    Anal(filenames,Plot,Target,aperture,SS)
 
 
     pass

@@ -71,7 +71,7 @@ if __name__ == '__main__':
                         action="store_false")    
     parser.add_argument('-f',
                         help='Name of the master flat to use \n || Can use None if no bias are available',
-                        default='MasterFlat.fits')    
+                        default=False)    
     
     parser.add_argument('-d',
                         help='Enable or disable the diagnostic',
